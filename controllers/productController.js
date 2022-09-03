@@ -35,3 +35,18 @@ exports.getProductById = (req, res) => {
     data: { product },
   });
 };
+
+exports.deleteProductById = (req, res) => {
+  const { id } = req.params;
+  if (!id) return res.status(400).json({status: 'BadRequest'});
+  let products = JSON.parse(readFileSync(`${__dirname}/../data/products.json`, 'utf8'));
+  const product = products.find((item) => item.id === +id);
+  if (!product)
+    return res.status(404).json({
+      status: 'Not Found',
+    });
+  res.status(200).json({
+    status: 'success',
+    data: { product },
+  });
+};
