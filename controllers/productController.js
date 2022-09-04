@@ -1,8 +1,18 @@
 const { readFileSync, writeFileSync } = require('fs');
+const pathFile = `${__dirname}/../data/products.json`;
+
+const readData = () => {
+  return JSON.parse(readFileSync(pathFile, 'utf8'));
+};
+
+const writeData = (products) => {
+  writeFileSync(pathFile, JSON.stringify(products));
+  return;
+};
 
 // Handlers
 exports.getAllProducts = (req, res) => {
-  const products = JSON.parse(readFileSync(`${__dirname}/../data/products.json`, 'utf8'));
+  const products = readData();
   res.status(200).json({
     status: 'success',
     requestTime: req.requestTime,
@@ -12,9 +22,9 @@ exports.getAllProducts = (req, res) => {
 };
 
 exports.addNewProduct = (req, res) => {
-  const products = JSON.parse(readFileSync(`${__dirname}/../data/products.json`, 'utf8'));
+  const products = readData();
   products.push(req.body);
-  writeFileSync(`${__dirname}/data/products.json`, JSON.stringify(products));
+  writeData(products);
   res.status(200).json({
     status: 'success',
     results: products.length,
@@ -24,7 +34,7 @@ exports.addNewProduct = (req, res) => {
 
 exports.getProductById = (req, res) => {
   const { id } = req.params;
-  const products = JSON.parse(readFileSync(`${__dirname}/../data/products.json`, 'utf8'));
+  const products = readData();
   const product = products.find((item) => item.id === +id);
   if (!product)
     return res.status(404).json({
@@ -38,15 +48,14 @@ exports.getProductById = (req, res) => {
 
 exports.deleteProductById = (req, res) => {
   const { id } = req.params;
-  if (!id) return res.status(400).json({status: 'BadRequest'});
-  let products = JSON.parse(readFileSync(`${__dirname}/../data/products.json`, 'utf8'));
+  let products = readData();
   const product = products.find((item) => item.id === +id);
   if (!product)
     return res.status(404).json({
       status: 'Not Found',
     });
+  writeData(products.filter((i) => i.id != id));
   res.status(200).json({
     status: 'success',
-    data: { product },
   });
 };

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --inspect -r dotenv/config server.js ",
+    "dev": "nodemon --inspect -r --ignore 'data/*.json' dotenv/config server.js ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
