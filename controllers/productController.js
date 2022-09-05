@@ -1,14 +1,4 @@
-const { readFileSync, writeFileSync } = require('fs');
-const pathFile = `${__dirname}/../data/products.json`;
-
-const readData = () => {
-  return JSON.parse(readFileSync(pathFile, 'utf8'));
-};
-
-const writeData = (products) => {
-  writeFileSync(pathFile, JSON.stringify(products));
-  return;
-};
+const { readData, writeData } = require('../common/lib');
 
 // Handlers
 exports.getAllProducts = (req, res) => {
