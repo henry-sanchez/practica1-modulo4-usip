@@ -1,8 +1,10 @@
 const { readData, writeData } = require('../common/lib');
+const Product = require('../models/Product');
 
 // Handlers
-exports.obtenerProductos = (req, res) => {
-  const products = readData();
+exports.obtenerProductos = async (req, res) => {
+  const products = await Product.find();
+
   res.status(200).json({
     status: 'success',
     requestTime: req.requestTime,
