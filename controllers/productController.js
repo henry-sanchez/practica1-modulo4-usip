@@ -13,21 +13,18 @@ exports.obtenerProductos = async (req, res) => {
   });
 };
 
-exports.agregarProducto = (req, res) => {
-  const products = readData();
-  products.push(req.body);
-  writeData(products);
+exports.agregarProducto = async (req, res) => {
+  const product = new Product(req.body);
+  await product.save();
   res.status(200).json({
     status: 'success',
-    results: products.length,
-    data: { products },
+    data: { product },
   });
 };
 
-exports.obtenerProductoId = (req, res) => {
+exports.obtenerProductoId = async (req, res) => {
   const { id } = req.params;
-  const products = readData();
-  const product = products.find((item) => item.id === +id);
+  const product = await Product.findById(id);
   if (!product)
     return res.status(404).json({
       status: 'Not Found',
