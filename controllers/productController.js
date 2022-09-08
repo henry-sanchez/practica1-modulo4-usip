@@ -1,8 +1,8 @@
-const { readData, writeData } = require('../common/lib');
+const { Product } = require('../models');
 
 // Handlers
-exports.obtenerProductos = (req, res) => {
-  const products = readData();
+exports.obtenerProductos = async (req, res) => {
+  const products = await Product.findAll();
   res.status(200).json({
     status: 'success',
     requestTime: req.requestTime,
@@ -11,21 +11,18 @@ exports.obtenerProductos = (req, res) => {
   });
 };
 
-exports.agregarProducto = (req, res) => {
-  const products = readData();
-  products.push(req.body);
-  writeData(products);
+exports.agregarProducto = async (req, res) => {
+  let newProduct = Product.build(req.body);
+  newProduct = await newProduct.save();
   res.status(200).json({
     status: 'success',
-    results: products.length,
-    data: { products },
+    data: { product: newProduct },
   });
 };
 
-exports.obtenerProductoId = (req, res) => {
+exports.obtenerProductoId = async (req, res) => {
   const { id } = req.params;
-  const products = readData();
-  const product = products.find((item) => item.id === +id);
+  const product = await Product.findByPk(id);
   if (!product)
     return res.status(404).json({
       status: 'Not Found',
