@@ -33,33 +33,31 @@ exports.obtenerProductoId = async (req, res) => {
   });
 };
 
-exports.borrarProductoId = (req, res) => {
+exports.borrarProductoId = async (req, res) => {
   const { id } = req.params;
-  let products = readData();
-  const product = products.find((item) => item.id === +id);
+  const product = await Product.findByPk(id);
   if (!product)
     return res.status(404).json({
       status: 'Not Found',
     });
-  writeData(products.filter((i) => i.id != id));
+  await Product.destroy({ where: { id } });
   res.status(200).json({
     status: 'success',
   });
 };
 
-exports.actualizarProductoId = (req, res) => {
+exports.actualizarProductoId = async (req, res) => {
   const { id } = req.params;
   const { body } = req;
-  let products = readData();
-  const index = products.findIndex((item) => item.id === +id);
-  if (index < 0)
+  const product = await Product.findByPk(id);
+  if (!product)
     return res.status(404).json({
       status: 'Not Found',
     });
-  products[index].name = body.name ?? products[index].name;
-  products[index].price = body.price ?? products[index].price;
-  products[index].category = body.category ?? products[index].category;
-  writeData(products);
+  product.productName = body.productName || product.productName;
+  product.price = body.price || product.price;
+  product.description = body.description || product.description;
+  await product.save();
   res.status(200).json({
     status: 'success',
   });
