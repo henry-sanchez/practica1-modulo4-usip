@@ -1,8 +1,9 @@
 const { readData, writeData } = require('../common/lib');
 const Product = require('../models/Product');
+const catchAsync = require('../utils/catchAsync');
 
 // Handlers
-exports.obtenerProductos = async (req, res) => {
+exports.obtenerProductos = catchAsync(async (req, res) => {
   const products = await Product.find();
 
   res.status(200).json({
@@ -11,18 +12,18 @@ exports.obtenerProductos = async (req, res) => {
     results: products.length,
     data: { products },
   });
-};
+});
 
-exports.agregarProducto = async (req, res) => {
+exports.agregarProducto = catchAsync(async (req, res) => {
   const product = new Product(req.body);
   await product.save();
   res.status(200).json({
     status: 'success',
     data: { product },
   });
-};
+});
 
-exports.obtenerProductoId = async (req, res) => {
+exports.obtenerProductoId = catchAsync(async (req, res) => {
   const { id } = req.params;
   const product = await Product.findById(id);
   if (!product)
@@ -33,21 +34,21 @@ exports.obtenerProductoId = async (req, res) => {
     status: 'success',
     data: { product },
   });
-};
+});
 
-exports.borrarProductoId = async (req, res) => {
+exports.borrarProductoId = catchAsync(async (req, res) => {
   const { id } = req.params;
   await Product.findByIdAndDelete(id);
   res.status(200).json({
     status: 'success',
   });
-};
+});
 
-exports.actualizarProductoId = async (req, res) => {
+exports.actualizarProductoId = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { body } = req;
   await Product.findByIdAndUpdate(id, body, {new: true});
   res.status(200).json({
     status: 'success',
   });
-};
+});
