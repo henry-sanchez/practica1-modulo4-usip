@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const productRouter = require('./routers/productRoutes');
+const userRouter = require('./routers/userRoutes');
 const MyError = require('./utils/MyError');
 
 const app = express();
@@ -15,6 +16,7 @@ app.use((req, res, next) => {
 
 // routes
 app.use('/api/v1/products', productRouter);
+app.use('/api/v1/users', userRouter);
 
 app.all('*', (req, res, next) => {
   next(new MyError('route not found', 404));
