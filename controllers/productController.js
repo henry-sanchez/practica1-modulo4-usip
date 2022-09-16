@@ -1,4 +1,3 @@
-const { readData, writeData } = require('../common/lib');
 const Product = require('../models/Product');
 const catchAsync = require('../utils/catchAsync');
 
@@ -23,22 +22,27 @@ exports.agregarProducto = catchAsync(async (req, res) => {
   });
 });
 
-exports.obtenerProductoId = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  const product = await Product.findById(id);
-  if (!product)
-    return res.status(404).json({
-      status: 'Not Found',
+exports.obtenerProductoId = catchAsync(
+  async (req, res) => {
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    if (!product)
+      return res.status(404).json({
+        status: 'Not Found',
+      });
+    res.status(200).json({
+      status: 'success',
+      data: { product },
     });
-  res.status(200).json({
-    status: 'success',
-    data: { product },
-  });
-});
+  }
+);
 
 exports.borrarProductoId = catchAsync(async (req, res) => {
   const { id } = req.params;
-  await Product.findByIdAndDelete(id);
+  const result = await Product.findByIdAndDelete(id);
+  if (!result) return res.status(404).json({
+    status: 'Not Found',
+  });
   res.status(200).json({
     status: 'success',
   });
@@ -47,7 +51,10 @@ exports.borrarProductoId = catchAsync(async (req, res) => {
 exports.actualizarProductoId = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { body } = req;
-  await Product.findByIdAndUpdate(id, body, {new: true});
+  const result = await Product.findByIdAndUpdate(id, body, {new: true});
+  if (!result) return res.status(404).json({
+    status: 'Not Found',
+  });
   res.status(200).json({
     status: 'success',
   });

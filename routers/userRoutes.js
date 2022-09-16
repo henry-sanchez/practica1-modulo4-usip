@@ -4,11 +4,11 @@ const userRouter = express.Router();
 
 // routes
 userRouter.route('/')
-  // .get(productController.obtenerProductos)
+  .get(userController.obtenerUsuarios)
   .post(userController.agregarUsuario);
-// userRouter.route('/:id')
-//   .get(productController.obtenerProductoId)
-//   .delete(productController.borrarProductoId)
-//   .put(productController.actualizarProductoId);
+userRouter.route('/:id')
+  .get(userController.obtenerUsuarioId)
+  .delete(userController.borrarUsuarioId)
+  .put(userController.actualizarUsuarioId);
 
 module.exports = userRouter;
