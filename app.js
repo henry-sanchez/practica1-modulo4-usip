@@ -3,6 +3,7 @@ const morgan = require("morgan");
 const productRouter = require('./routers/productRoutes');
 const userRouter = require('./routers/userRoutes');
 const authRouter = require('./routers/authRoutes');
+const shoppingCartRouter = require('./routers/shoppingCartRoutes');
 const MyError = require('./utils/MyError');
 
 const app = express();
@@ -18,6 +19,7 @@ app.use((req, res, next) => {
 // routes
 app.use('/api/v1/products', productRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/cart', shoppingCartRouter);
 app.use("/api/v1/auth/", authRouter);
 
 app.all('*', (req, res, next) => {
