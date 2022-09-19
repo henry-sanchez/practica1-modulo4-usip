@@ -2,93 +2,94 @@ const ShoppingCart = require('../models/ShoppingCart');
 const catchAsync = require('../utils/catchAsync');
 
 // Handlers
-exports.listarCarrito = catchAsync(async (req, res) => {
-  const carritos = await ShoppingCart.find();
+exports.listarCarritos = catchAsync(async (req, res) => {
+  const carts = await ShoppingCart.find();
 
   res.status(200).json({
     status: 'success',
-    results: carritos.length,
-    data: { carritos },
+    results: carts.length,
+    data: { carts },
+  });
+});
+
+exports.listarCarritosPorUsuario = catchAsync(async (req, res) => {
+  const idUser = req.user._id;
+  const carts = await ShoppingCart.find({ user: idUser });
+
+  res.status(200).json({
+    status: 'success',
+    results: carts.length,
+    data: { carts },
   });
 });
 
 exports.crearCarrito = catchAsync(async (req, res) => {
-  const { idUsuario } = req.params;
-  const { idProducto, cantidad } = req.body;
-  let carrito;
-  const carritos = await ShoppingCart.find({
-    user: idUsuario,
-  });
-  if (carritos.lenght === 0) {
-    carrito = new ShoppingCart({
-      user: idUsuario,
+  const idUser = req.user._id;
+  const { idProduct, amount, price } = req.body;
+  let cart = (await ShoppingCart.find({
+    user: idUser,
+    status: 'PENDING'
+  })).pop();
+  if (!cart) {
+    cart = new ShoppingCart({
+      user: idUser,
       status: 'PENDING',
       products: [{
-        idProducto,
-        cantidad,
+        idProduct,
+        amount,
+        price,
       }]
     });
   } else {
-    carrito = carritos.find((carrito) => carrito.status === 'PENDING');
-    if (carrito) {
-      carrito.products.push({
-        idProducto,
-        cantidad,
-      });
-    } else {
-      carrito = new ShoppingCart({
-        user: idUsuario,
-        status: 'PENDING',
-        products: [{
-          idProducto,
-          cantidad,
-        }]
-      });
-    }
+    cart.products.push({
+      idProduct,
+      amount,
+      price,
+    });
   }
-  await carrito.save();
+  await cart.save();
 
   res.status(200).json({
     status: 'success',
-    data: { carrito },
+    data: { cart },
   });
 });
 
 exports.borrarProducto = catchAsync(
   async (req, res) => {
-    const { idUsuario, idProducto } = req.params;
-    const carritos = await ShoppingCart.find({
-      user: idUsuario,
-    });
-    if (carritos.length === 0) {
+    const { idProduct } = req.params;
+    const idUser = req.user._id;
+    const cart = (await ShoppingCart.find({
+      user: idUser,
+      status: 'PENDING',
+    })).pop();
+    if (!cart) {
       return res.status(404).json({
         status: 'Not Found',
       });
     }
-    const carrito = carritos.find((carrito) => carrito.status === 'PENDING');
-    if (!carrito) {
-      return res.status(404).json({
-        status: 'Not Found',
-      });
-    }
-    carrito.products = carrito.products.filter((producto) => producto.idProducto !== idProducto);
-    await carritos.save();
+    cart.products = cart.products.filter((item) => item.idProduct !== idProduct);
+    await cart.save();
     res.status(200).json({
       status: 'success',
-      data: { carrito },
+      data: { cart },
     });
   }
 );
 
 exports.pagarCarrito = catchAsync(async (req, res) => {
-  const { idCarrito } = req.params;
-  const carrito = await ShoppingCart.findById(idCarrito);
-  if (!carrito) return res.status(404).json({
+  const { idCart } = req.params;
+  const cart = await ShoppingCart.findById(idCart);
+  if (!cart) return res.status(404).json({
     status: 'Not Found',
   });
-  carrito.status = 'PAID';
+  if (cart.products.length === 0) return res.status(400).json({
+    status: 'Bad Request, no products in shopping cart',
+  });
+  cart.status = 'PAID';
+  await cart.save();
   res.status(200).json({
     status: 'success',
-    data: { carrito },
+    data: { cart },
   });
 });

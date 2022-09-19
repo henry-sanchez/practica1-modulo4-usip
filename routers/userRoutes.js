@@ -5,9 +5,11 @@ const userRouter = express.Router();
 
 // routes
 userRouter.route('/')
-  // .all(authController.protect)
-  .get(authController.protect, userController.obtenerUsuarios)
-  .post(userController.agregarUsuario);
+  .get(
+    authController.protect,
+    userController.obtenerUsuarios,
+  )
+  .post(userController.agregarUsuario); // ruta abierta
 userRouter.route('/:id')
   .all(authController.protect)
   .get(userController.obtenerUsuarioId)

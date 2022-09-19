@@ -1,5 +1,11 @@
 ## Proyecto basico API REST
 
+### Descripción
+Se proporcionan API's para la gestión de productos, usuarios y carritos de compra, todas las rutas se encuentran protegidas a excepción de:
+- POST api/v1/auth/login (autenticación de usuarios)
+- POST api/v1/users (creación de usuarios)
+- GET api/v1/cart (listado de todos los carritos)
+
 ### Instrucciones de instalación
 1. Instalar nodemon de forma global:
 ```

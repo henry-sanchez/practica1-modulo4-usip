@@ -5,15 +5,18 @@ const shoppingCartRouter = express.Router();
 
 // routes
 shoppingCartRouter.route('/')
+  .get(shoppingCartController.listarCarritos) // ruta abierta
+  .post(
+    authController.protect,
+    shoppingCartController.crearCarrito,
+  );
+shoppingCartRouter.route('/user')
   .all(authController.protect)
-  .get(shoppingCartController.listarCarrito)
-shoppingCartRouter.route('/:idUsuario')
-  .all(authController.protect)
-  .post(shoppingCartController.crearCarrito);
-shoppingCartRouter.route('/:idUsuario/producto/:idProducto')
+  .get(shoppingCartController.listarCarritosPorUsuario);
+shoppingCartRouter.route('/:idProduct')
   .all(authController.protect)
   .delete(shoppingCartController.borrarProducto);
-shoppingCartRouter.route('/:idCarrito')
+shoppingCartRouter.route('/:idCart')
   .all(authController.protect)
   .post(shoppingCartController.pagarCarrito);
 
