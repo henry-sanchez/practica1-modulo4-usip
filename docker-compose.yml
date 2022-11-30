@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo_user
+      MONGO_INITDB_ROOT_PASSWORD: mongo_pass
+    ports:
+      - '27017:27017'
+  backend:
+    build: .
+    ports:
+      - '4000:4000'
+    links:
+      - mongo
